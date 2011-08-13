@@ -12,7 +12,7 @@ class testingbot(unittest.TestCase):
         self.browser.start()
         self.browser.set_timeout(90000)
 
-    def test_sauce(self):
+    def test_google(self):
         browser = self.browser
         browser.open("/")
         assert "Google" in browser.get_title()
