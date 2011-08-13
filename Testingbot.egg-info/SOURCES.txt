@@ -1,0 +1,11 @@
+setup.py
+Testingbot.egg-info/PKG-INFO
+Testingbot.egg-info/SOURCES.txt
+Testingbot.egg-info/dependency_links.txt
+Testingbot.egg-info/entry_points.txt
+Testingbot.egg-info/requires.txt
+Testingbot.egg-info/top_level.txt
+test/test.py
+testingbot/__init__.py
+testingbot/driver.py
+testingbot/install.py
