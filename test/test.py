@@ -5,7 +5,7 @@ from testingbot import driver
 class testingbot(unittest.TestCase):
     def setUp(self):
         self.browser = selenium(
-            'http://hub.testingbot.com',
+            'hub.testingbot.com',
             4444,
             "*safari",
             'http://www.google.com')

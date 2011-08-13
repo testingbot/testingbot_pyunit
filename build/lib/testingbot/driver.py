@@ -3,7 +3,14 @@ import unittest
 
 import httplib
 import urllib
-import sys, traceback
+import sys, traceback, os
+
+def get_testingbot_data():
+    path = os.path.expanduser('~/.testingbot')
+    f = open(path, 'r')
+    data = f.read()
+    f.close()
+    return data.split(":")
 
 def testingbot_do_command(self, verb, args):
     conn = httplib.HTTPConnection(self.host, self.port)
@@ -14,7 +21,8 @@ def testingbot_do_command(self, verb, args):
                     urllib.quote_plus(unicode(args[i]).encode('utf-8'))
         if (None != self.sessionId):
             body += "&sessionId=" + unicode(self.sessionId)
-        body += "&client_key=7db8dbdf116122fd098b58fd68c2c0f6&client_secret=00da1272195e93e8499f3f799d5797c3"
+        client_key, client_secret = get_testingbot_data()
+        body += "&client_key=" + client_key + "&client_secret=" + client_secret
         headers = {
             "Content-Type":
             "application/x-www-form-urlencoded; charset=utf-8"
@@ -40,7 +48,8 @@ selenium.stop = testingbot_stop
 def testingbot_teardown(self):
     etype, value, tb = sys.exc_info()
     success = int(etype == None)
-    body = "session_id=" + unicode(self.browser.copy_sessionId) + "&client_key=7db8dbdf116122fd098b58fd68c2c0f6&client_secret=00da1272195e93e8499f3f799d5797c3&status_message=" + ''.join(traceback.format_exception(etype, value, tb, 5)) + "&success=" + str(success) + "&name=" + str(self.id().split('.')[-1]) + "&kind=3"
+    client_key, client_secret = get_testingbot_data()
+    body = "session_id=" + unicode(self.browser.copy_sessionId) + "&client_key=" + client_key + "&client_secret=" + client_secret + "&status_message=" + ''.join(traceback.format_exception(etype, value, tb, 5)) + "&success=" + str(success) + "&name=" + str(self.id().split('.')[-1]) + "&kind=3"
     conn = httplib.HTTPConnection("api.testingbot.com", 80)
     headers = {
         "Content-Type":
