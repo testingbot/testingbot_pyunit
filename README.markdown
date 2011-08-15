@@ -10,7 +10,7 @@ Requirements
 ------------
 
 You need an API key and API secret from http://www.testingbot.com
-You also need to install the selenium and pyunit packages.
+You also need to install the selenium and pyunit packages. (easy_install should take care of this for you)
 
 Example
 -------
