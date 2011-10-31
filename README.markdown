@@ -24,9 +24,9 @@ Example
             self.browser = selenium(
                 'hub.testingbot.com',
                 4444,
-                "*safari",
+                "firefox",
                 'http://www.google.com')
-            self.browser.start()
+            self.browser.start('screenrecorder=true;platform=WINDOWS;version=6;screenshot=false')
             self.browser.set_timeout(90000)
 
         def test_google(self):
