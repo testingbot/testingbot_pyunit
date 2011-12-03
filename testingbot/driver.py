@@ -50,7 +50,7 @@ def testingbot_teardown(self):
     success = int(etype == None)
     client_key, client_secret = get_testingbot_data()
     body = "session_id=" + unicode(self.browser.copy_sessionId) + "&client_key=" + client_key + "&client_secret=" + client_secret + "&status_message=" + ''.join(traceback.format_exception(etype, value, tb, 5)) + "&success=" + str(success) + "&name=" + str(self.id().split('.')[-1]) + "&kind=3"
-    conn = httplib.HTTPConnection("api.testingbot.com", 80)
+    conn = httplib.HTTPConnection("testingbot.com", 80)
     headers = {
         "Content-Type":
         "application/x-www-form-urlencoded; charset=utf-8"
