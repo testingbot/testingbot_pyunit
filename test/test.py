@@ -9,7 +9,7 @@ class testingbot(unittest.TestCase):
             4444,
             "firefox",
             'http://www.google.com')
-        self.browser.start('screenrecorder=true;platform=WINDOWS;version=6;screenshot=false')
+        self.browser.start('screenrecorder=true;platform=WINDOWS;version=8;screenshot=false')
         self.browser.set_timeout(90000)
 
     def test_google(self):

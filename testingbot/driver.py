@@ -49,14 +49,14 @@ def testingbot_teardown(self):
     etype, value, tb = sys.exc_info()
     success = int(etype == None)
     client_key, client_secret = get_testingbot_data()
-    body = "session_id=" + unicode(self.browser.copy_sessionId) + "&client_key=" + client_key + "&client_secret=" + client_secret + "&status_message=" + ''.join(traceback.format_exception(etype, value, tb, 5)) + "&success=" + str(success) + "&name=" + str(self.id().split('.')[-1]) + "&kind=3"
+    body = "session_id=" + unicode(self.browser.copy_sessionId) + "&client_key=" + client_key.rstrip() + "&client_secret=" + client_secret.rstrip() + "&status_message=" + ''.join(traceback.format_exception(etype, value, tb, 5)).rstrip() + "&success=" + str(success) + "&name=" + str(self.id().split('.')[-1]) + "&kind=3"
     conn = httplib.HTTPConnection("testingbot.com", 80)
     headers = {
         "Content-Type":
         "application/x-www-form-urlencoded; charset=utf-8"
     }
 
-    conn.request("POST", "/hq/", body, headers)
+    conn.request("POST", "/hq", body, headers)
     unittest.TestCase._old_method(self)
 
 if not hasattr(selenium, '_old_method') :
