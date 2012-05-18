@@ -46,10 +46,14 @@ selenium._old_stop = selenium.stop
 selenium.stop = testingbot_stop
 
 def testingbot_teardown(self):
+    if hasattr(self, 'driver') :
+      session_id = self.driver.session_id
+    else:
+      session_id = self.browser.copy_sessionId
     etype, value, tb = sys.exc_info()
     success = int(etype == None)
     client_key, client_secret = get_testingbot_data()
-    body = "session_id=" + unicode(self.browser.copy_sessionId) + "&client_key=" + client_key.rstrip() + "&client_secret=" + client_secret.rstrip() + "&status_message=" + ''.join(traceback.format_exception(etype, value, tb, 5)).rstrip() + "&success=" + str(success) + "&name=" + str(self.id().split('.')[-1]) + "&kind=3"
+    body = "session_id=" + unicode(session_id) + "&client_key=" + client_key.rstrip() + "&client_secret=" + client_secret.rstrip() + "&status_message=" + ''.join(traceback.format_exception(etype, value, tb, 5)).rstrip() + "&success=" + str(success) + "&name=" + str(self.id().split('.')[-1]) + "&kind=3"
     conn = httplib.HTTPConnection("testingbot.com", 80)
     headers = {
         "Content-Type":
@@ -57,11 +61,10 @@ def testingbot_teardown(self):
     }
 
     conn.request("POST", "/hq", body, headers)
-    unittest.TestCase._old_method(self)
 
 if not hasattr(selenium, '_old_method') :
-	selenium._old_method = selenium.do_command
-	selenium.do_command = testingbot_do_command
+    selenium._old_method = selenium.do_command
+    selenium.do_command = testingbot_do_command
 
 unittest.TestCase._old_method = unittest.TestCase.tearDown
 unittest.TestCase.tearDown = testingbot_teardown
