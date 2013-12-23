@@ -3,40 +3,17 @@ import unittest
 
 import httplib
 import urllib
+import base64
 import sys, traceback, os
 
 def get_testingbot_data():
-    path = os.path.join(os.path.expanduser('~/'), '.testingbot')
-    f = open(path, 'r')
+    file_path = os.path.join(os.path.expanduser('~/'), '.testingbot')
+    if not os.path.exists(file_path):
+        raise Exception("No .testingbot file found in %s" % file_path)
+    f = open(file_path, 'r')
     data = f.read()
     f.close()
     return data.split(":")
-
-def testingbot_do_command(self, verb, args):
-    conn = httplib.HTTPConnection(self.host, self.port)
-    try:
-        body = u'cmd=' + urllib.quote_plus(unicode(verb).encode('utf-8'))
-        for i in range(len(args)):
-            body += '&' + unicode(i+1) + '=' + \
-                    urllib.quote_plus(unicode(args[i]).encode('utf-8'))
-        if (None != self.sessionId):
-            body += "&sessionId=" + unicode(self.sessionId)
-        client_key, client_secret = get_testingbot_data()
-        body += "&client_key=" + client_key + "&client_secret=" + client_secret
-        headers = {
-            "Content-Type":
-            "application/x-www-form-urlencoded; charset=utf-8"
-        }
-
-        conn.request("POST", "/selenium-server/driver/", body, headers)
-
-        response = conn.getresponse()
-        data = unicode(response.read(), "UTF-8")
-        if (not data.startswith('OK')):
-            raise Exception, data
-        return data
-    finally:
-        conn.close()
 
 def testingbot_stop(self):
     selenium.copy_sessionId = self.sessionId
@@ -47,21 +24,26 @@ selenium.stop = testingbot_stop
 
 def testingbot_teardown(self):
     etype, value, tb = sys.exc_info()
-    success = int(etype == None)
+    success = (etype == None)
     client_key, client_secret = get_testingbot_data()
-    body = "session_id=" + unicode(self.browser.copy_sessionId) + "&client_key=" + client_key.rstrip() + "&client_secret=" + client_secret.rstrip() + "&status_message=" + ''.join(traceback.format_exception(etype, value, tb, 5)).rstrip() + "&success=" + str(success) + "&name=" + str(self.id().split('.')[-1]) + "&kind=3"
-    conn = httplib.HTTPConnection("testingbot.com", 80)
+    params  = urllib.urlencode({'test[success]': success, 'test[status_message]': ''.join(traceback.format_exception(etype, value, tb, 5)).rstrip(),
+                                'test[name]': str(self.id().split('.')[-1])})
+    conn = httplib.HTTPSConnection("api.testingbot.com")
+    base64string = base64.encodestring('%s:%s' % (client_key.rstrip(), client_secret.rstrip()))[:-1].replace("\n", "")
+    
     headers = {
         "Content-Type":
-        "application/x-www-form-urlencoded; charset=utf-8"
+        "application/x-www-form-urlencoded; charset=utf-8",
+        "Authorization" : "Basic %s" % base64string
     }
 
-    conn.request("POST", "/hq", body, headers)
-    unittest.TestCase._old_method(self)
+    if hasattr(selenium, 'copy_sessionId'):
+        sessionId = selenium.copy_sessionId
+    else:
+        sessionId = self.driver.session_id
 
-if not hasattr(selenium, '_old_method') :
-	selenium._old_method = selenium.do_command
-	selenium.do_command = testingbot_do_command
+    conn.request("PUT", "/v1/tests/%s" % sessionId, params, headers)
+    unittest.TestCase._old_method(self)
 
 unittest.TestCase._old_method = unittest.TestCase.tearDown
 unittest.TestCase.tearDown = testingbot_teardown
