@@ -6,7 +6,7 @@ import urllib
 import sys, traceback, os
 
 def get_testingbot_data():
-    path = os.path.expanduser('~/.testingbot')
+    path = os.path.join(os.path.expanduser('~/'), '.testingbot')
     f = open(path, 'r')
     data = f.read()
     f.close()
