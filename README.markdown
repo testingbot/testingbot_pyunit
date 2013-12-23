@@ -77,5 +77,5 @@ Example (RC)
 Copyright
 ---------
 
-Copyright (c) 2012 TestingBot.com
+Copyright (c) TestingBot.com
 See LICENSE for more information.
