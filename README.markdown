@@ -7,14 +7,7 @@ This example demonstrates how to use Python with PyUnit to run tests across seve
 
 ### Environment Setup
 
-1. Global Dependencies
-    * [Install Maven](https://maven.apache.org/install.html)
-    * Or Install Maven with [Homebrew](http://brew.sh/)
-    ```
-    $ brew install maven
-    ```
-
-2. TestingBot Credentials
+1. TestingBot Credentials
     * Add your TestingBot Key and Secret as environmental variables. You can find these in the [TestingBot Dashboard](https://testingbot.com/members/).
     ```
     $ export TESTINGBOT_KEY=<your TestingBot Key>
